@@ -1,3 +1,6 @@
-# Local Files
+# local Files
 Gemfile.lock
 selenium_page-*.gem
+
+# development files
+local/
