@@ -1,9 +1,16 @@
+require 'selenium_page/exceptions'
+
 # SeleniumPage
-class SeleniumPage
-  def self.hi(language = 'english')
-    translator = Translator.new(language)
-    translator.hi
+module SeleniumPage
+  autoload :Page, 'selenium_page/page'
+
+  # NOTE: reference
+  # https://en.wikipedia.org/wiki/URL
+  def self.configure_scheme_and_authority(scheme_and_authority)
+    @@scheme_and_authority = scheme_and_authority.to_s
+  end
+
+  def self.scheme_and_authority
+    @@scheme_and_authority
   end
 end
-
-require 'selenium_page/translator'

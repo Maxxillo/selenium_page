@@ -3,4 +3,5 @@ Gemfile.lock
 selenium_page-*.gem
 
 # development files
+NOTES.md
 local/
