@@ -1,4 +1,5 @@
 # local Files
+coverage/
 Gemfile.lock
 selenium_page-*.gem
 
