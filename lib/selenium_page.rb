@@ -1,20 +1,21 @@
 # frozen_string_literal: true
 
-require 'selenium_page/exceptions'
+# external
+require 'selenium-webdriver'
 
 # SeleniumPage
 module SeleniumPage
-  autoload :Page, 'selenium_page/page'
+  require_relative 'selenium_page/exceptions'
+  require_relative 'selenium_page/page'
 
-  # NOTE: reference
-  # https://en.wikipedia.org/wiki/URL
-  # rubocop:disable Style/ClassVars
+  # naming from https://en.wikipedia.org/wiki/URL
   def self.configure_scheme_and_authority(scheme_and_authority)
-    @@scheme_and_authority = scheme_and_authority.to_s
+    raise UnexpectedSchemeAndAuthority unless scheme_and_authority.instance_of? String
+    
+    @scheme_and_authority = scheme_and_authority
   end
-  # rubocop:enable Style/ClassVars
 
   def self.scheme_and_authority
-    @@scheme_and_authority
+    @scheme_and_authority
   end
 end

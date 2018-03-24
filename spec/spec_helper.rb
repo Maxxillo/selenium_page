@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Debugger
+# debugger
 require 'pry-byebug'
 # binding.pry
 
@@ -9,19 +9,16 @@ SimpleCov.start do
   add_filter(/_spec.rb/)
 end
 
-# NOTE: load everything
-Dir[File.expand_path('lib/**/*.rb')].map { |f| require f }
+# load code
+require './lib/selenium_page.rb'
 
 RSpec.configure do |config|
+  # randomness
   config.order = :random
 
-  config.expect_with :rspec do |expectations|
-    expectations.include_chain_clauses_in_custom_matcher_descriptions = true
-  end
-
+  # verify the mocked class
   config.mock_with :rspec do |mocks|
+    mocks.verify_doubled_constant_names = true
     mocks.verify_partial_doubles = true
   end
-
-  config.shared_context_metadata_behavior = :apply_to_host_groups
 end

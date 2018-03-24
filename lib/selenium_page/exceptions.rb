@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 module SeleniumPage
-  # WrongDriverError
-  class WrongDriverError < StandardError
+  class UnexpectedSchemeAndAuthority < StandardError
     def message
-      'Only Selenium::WebDriver::Driver (or extensions) are accepted'
+      "Only 'String' are accepted"
     end
   end
 end
