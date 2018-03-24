@@ -7,7 +7,7 @@ module SeleniumPage
 
     def self.configure_url(url)
       raise UnexpectedUrlError unless url.is_a? String
-      
+
       @url = url
     end
 

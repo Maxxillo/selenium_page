@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe SeleniumPage do
   let(:scheme_and_authority) { 'http://localhost:8080' }
 
@@ -17,11 +19,13 @@ describe SeleniumPage do
     end
 
     context 'when param scheme_and_authority is not a string' do
-      let(:scheme_and_authority) { 12345 }
+      let(:scheme_and_authority) { 12_345 }
 
       it 'raises error' do
-        expect { described_class.configure_scheme_and_authority(scheme_and_authority) }
-          .to raise_error SeleniumPage::UnexpectedSchemeAndAuthority
+        expect do
+          described_class.configure_scheme_and_authority(scheme_and_authority)
+        end.to raise_error SeleniumPage::UnexpectedSchemeAndAuthority
+
         expect(described_class.instance_variable_get(:@scheme_and_authority))
           .to be(nil)
       end

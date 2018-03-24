@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe SeleniumPage::Page::SchemeAndAuthorityNotSetError do
   it 'inherits from StandardError' do
     expect(described_class.superclass).to be StandardError

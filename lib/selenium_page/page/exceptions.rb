@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module SeleniumPage
+  # Page
   class Page
     # SchemeAndAuthorityNotSetError
     class SchemeAndAuthorityNotSetError < StandardError

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe SeleniumPage::Page do
   let(:scheme_and_authority) { 'http://localhost:8080' }
   let(:url) { '/about' }
@@ -19,10 +21,11 @@ describe SeleniumPage::Page do
     end
 
     context 'when not a String' do
-      let(:url) { 12345 }
+      let(:url) { 12_345 }
 
       it 'raises error' do
-        expect { described_class.configure_url(url) }.to raise_error(SeleniumPage::Page::UnexpectedUrlError)
+        expect { described_class.configure_url(url) }
+          .to raise_error(SeleniumPage::Page::UnexpectedUrlError)
       end
     end
   end
@@ -40,8 +43,8 @@ describe SeleniumPage::Page do
 
     it 'sets @page' do
       expect(driver).to receive(:is_a?)
-                          .with(Selenium::WebDriver::Driver)
-                          .and_return(true)
+        .with(Selenium::WebDriver::Driver)
+        .and_return(true)
 
       expect(subject.instance_variable_get(:@page))
         .to be(driver)
@@ -59,8 +62,8 @@ describe SeleniumPage::Page do
 
     before do
       expect(driver).to receive(:is_a?)
-                          .with(Selenium::WebDriver::Driver)
-                          .and_return(true)
+        .with(Selenium::WebDriver::Driver)
+        .and_return(true)
     end
 
     context 'when @url is set' do
@@ -70,7 +73,7 @@ describe SeleniumPage::Page do
 
       it 'calls @page.get' do
         expect(SeleniumPage).to receive(:scheme_and_authority)
-                                        .and_return(scheme_and_authority)
+          .and_return(scheme_and_authority)
 
         expect(driver).to receive(:get).with(
           scheme_and_authority + url
@@ -83,14 +86,16 @@ describe SeleniumPage::Page do
         it 'raises error' do
           expect(SeleniumPage).to receive(:scheme_and_authority)
 
-          expect { subject.get }.to raise_error(SeleniumPage::Page::SchemeAndAuthorityNotSetError)
+          expect { subject.get }
+            .to raise_error(SeleniumPage::Page::SchemeAndAuthorityNotSetError)
         end
       end
     end
 
     context 'when @url is not set' do
       it 'raises error' do
-        expect { subject.get }.to raise_error(SeleniumPage::Page::UrlNotSetError)
+        expect { subject.get }
+          .to raise_error(SeleniumPage::Page::UrlNotSetError)
       end
     end
   end
