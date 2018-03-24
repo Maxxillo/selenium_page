@@ -1,8 +1,17 @@
-# local Files
+##### local Files
+# test Coverage
 coverage/
+# since is a gem
 Gemfile.lock
+# local builds of the gem
 selenium_page-*.gem
 
-# development files
-NOTES.md
+##### development files
+# documentation configuration
+.yardoc/
+# generated documentation
+doc/
+# unrelated local scripts / tests
 local/
+# unrelated notes file
+NOTES.md

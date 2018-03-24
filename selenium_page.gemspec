@@ -19,4 +19,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec', '>= 3.7.0'
   s.add_development_dependency 'rubocop', '>= 0.53.0'
   s.add_development_dependency 'simplecov', '>= 0.16.0'
+  s.add_development_dependency 'yard', '>= 0.9.0'
 end
