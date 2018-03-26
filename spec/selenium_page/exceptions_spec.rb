@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe SeleniumPage::UnexpectedSchemeAndAuthority do
+describe SeleniumPage::UnexpectedSchemeAndAuthorityError do
   it 'inherits from StandardError' do
     expect(described_class.superclass).to be StandardError
   end

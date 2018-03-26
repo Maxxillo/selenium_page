@@ -24,7 +24,7 @@ describe SeleniumPage do
       it 'raises error' do
         expect do
           described_class.configure_scheme_and_authority(scheme_and_authority)
-        end.to raise_error SeleniumPage::UnexpectedSchemeAndAuthority
+        end.to raise_error SeleniumPage::UnexpectedSchemeAndAuthorityError
 
         expect(described_class.instance_variable_get(:@scheme_and_authority))
           .to be(nil)

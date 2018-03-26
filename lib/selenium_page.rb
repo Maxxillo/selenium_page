@@ -10,7 +10,9 @@ module SeleniumPage
 
   # naming from https://en.wikipedia.org/wiki/URL
   def self.configure_scheme_and_authority(scheme_and_authority)
-    raise UnexpectedSchemeAndAuthority unless scheme_and_authority.is_a? String
+    unless scheme_and_authority.is_a? String
+      raise UnexpectedSchemeAndAuthorityError
+    end
 
     @scheme_and_authority = scheme_and_authority
   end
