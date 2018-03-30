@@ -5,13 +5,12 @@ require 'selenium-webdriver'
 
 # SeleniumPage
 module SeleniumPage
-  require_relative 'selenium_page/exceptions'
+  require_relative 'selenium_page/errors'
   require_relative 'selenium_page/page'
 
-  # naming from https://en.wikipedia.org/wiki/URL
   def self.configure_scheme_and_authority(scheme_and_authority)
     unless scheme_and_authority.is_a? String
-      raise UnexpectedSchemeAndAuthorityError
+      raise Errors::UnexpectedSchemeAndAuthority
     end
 
     @scheme_and_authority = scheme_and_authority

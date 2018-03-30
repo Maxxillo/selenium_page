@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe SeleniumPage::Page::SchemeAndAuthorityNotSetError do
+describe SeleniumPage::Page::Errors::SchemeAndAuthorityNotSet do
   it 'inherits from StandardError' do
     expect(described_class.superclass).to be StandardError
   end
@@ -17,7 +17,7 @@ describe SeleniumPage::Page::SchemeAndAuthorityNotSetError do
   end
 end
 
-describe SeleniumPage::Page::UnexpectedUrlError do
+describe SeleniumPage::Page::Errors::UnexpectedUrl do
   it 'inherits from StandardError' do
     expect(described_class.superclass).to be StandardError
   end
@@ -33,7 +33,7 @@ describe SeleniumPage::Page::UnexpectedUrlError do
   end
 end
 
-describe SeleniumPage::Page::UrlNotSetError do
+describe SeleniumPage::Page::Errors::UrlNotSet do
   it 'inherits from StandardError' do
     expect(described_class.superclass).to be StandardError
   end
@@ -49,7 +49,7 @@ describe SeleniumPage::Page::UrlNotSetError do
   end
 end
 
-describe SeleniumPage::Page::WrongDriverError do
+describe SeleniumPage::Page::Errors::WrongDriver do
   it 'inherits from StandardError' do
     expect(described_class.superclass).to be StandardError
   end

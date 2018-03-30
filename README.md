@@ -20,7 +20,7 @@ https://github.com/bbatsov/rubocop
 
 bundle exec rubocop
 
-## Documentation
+## Documentation (todo ..)
 
 https://github.com/lsegal/yard
 

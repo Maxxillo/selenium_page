@@ -25,7 +25,7 @@ describe SeleniumPage::Page do
 
       it 'raises error' do
         expect { described_class.configure_url(url) }
-          .to raise_error(SeleniumPage::Page::UnexpectedUrlError)
+          .to raise_error(SeleniumPage::Page::Errors::UnexpectedUrl)
       end
     end
   end
@@ -52,7 +52,9 @@ describe SeleniumPage::Page do
 
     context 'when not a Selenium::WebDriver::Driver' do
       it 'raises error' do
-        expect { subject }.to raise_error(SeleniumPage::Page::WrongDriverError)
+        expect { subject }.to raise_error(
+          SeleniumPage::Page::Errors::WrongDriver
+        )
       end
     end
   end
@@ -100,16 +102,18 @@ describe SeleniumPage::Page do
         it 'raises error' do
           expect(SeleniumPage).to receive(:scheme_and_authority)
 
-          expect { subject.get }
-            .to raise_error(SeleniumPage::Page::SchemeAndAuthorityNotSetError)
+          expect { subject.get }.to raise_error(
+            SeleniumPage::Page::Errors::SchemeAndAuthorityNotSet
+          )
         end
       end
     end
 
     context 'when @url is not set' do
       it 'raises error' do
-        expect { subject.get }
-          .to raise_error(SeleniumPage::Page::UrlNotSetError)
+        expect { subject.get }.to raise_error(
+          SeleniumPage::Page::Errors::UrlNotSet
+        )
       end
     end
   end
