@@ -57,6 +57,20 @@ describe SeleniumPage::Page do
     end
   end
 
+  describe '#url' do
+    subject { described_class.new(driver) }
+
+    it 'gets @url from the class' do
+      expect(driver).to receive(:is_a?)
+        .with(Selenium::WebDriver::Driver)
+        .and_return(true)
+
+      described_class.instance_variable_set(:@url, url)
+
+      expect(subject.url).to eql(url)
+    end
+  end
+
   describe '#get' do
     subject { described_class.new(driver) }
 

@@ -1,16 +1,18 @@
 # frozen_string_literal: true
 
 module SeleniumPage
-  # Page
+  # Represents a page to load and interact with
   class Page
     require_relative 'page/exceptions'
 
+    # Configure the url for all the instances of the page
     def self.configure_url(url)
       raise UnexpectedUrlError unless url.is_a? String
 
       @url = url
     end
 
+    # Returns the instance url
     def self.url
       @url
     end
@@ -19,6 +21,10 @@ module SeleniumPage
       raise WrongDriverError unless driver.is_a? Selenium::WebDriver::Driver
 
       @page = driver
+    end
+
+    def url
+      self.class.url
     end
 
     def get
