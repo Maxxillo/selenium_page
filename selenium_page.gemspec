@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'selenium_page'
-  s.version     = '0.0.1'
+  s.version     = '0.1.0'
   s.date        = '2018-03-16'
   s.summary     = 'A page object pattern gem for Selenium Webdriver!'
   s.description = 'A page object pattern gem for Selenium Webdriver!'
