@@ -11,6 +11,8 @@ selenium_page-*.gem
 .yardoc/
 # generated documentation
 doc/
+# unnecessary local doc
+docs/
 # unrelated local scripts / tests
 local/
 # unrelated notes file
