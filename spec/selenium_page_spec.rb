@@ -11,13 +11,6 @@ describe SeleniumPage do
   end
 
   describe '.configure_scheme_and_authority' do
-    it 'sets @scheme_and_authority' do
-      described_class.configure_scheme_and_authority(scheme_and_authority)
-
-      expect(described_class.instance_variable_get(:@scheme_and_authority))
-        .to eql(scheme_and_authority)
-    end
-
     context 'when param scheme_and_authority is not a string' do
       let(:scheme_and_authority) { 12_345 }
 
@@ -29,6 +22,13 @@ describe SeleniumPage do
         expect(described_class.instance_variable_get(:@scheme_and_authority))
           .to be(nil)
       end
+    end
+
+    it 'sets @scheme_and_authority' do
+      described_class.configure_scheme_and_authority(scheme_and_authority)
+
+      expect(described_class.instance_variable_get(:@scheme_and_authority))
+        .to eql(scheme_and_authority)
     end
   end
 

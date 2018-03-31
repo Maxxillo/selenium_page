@@ -15,6 +15,16 @@ module SeleniumPage
       @url
     end
 
+    def self.element(element_name)
+      unless element_name.is_a? Symbol
+        raise Errors::UnexpectedElementName
+      end
+      if self.method_defined?(element_name)
+        raise Errors::AlreadyDefinedElementName.new(element_name)
+      end
+      define_method(element_name) { }
+    end
+
     def initialize(driver)
       raise Errors::WrongDriver unless driver.is_a? Selenium::WebDriver::Driver
 
