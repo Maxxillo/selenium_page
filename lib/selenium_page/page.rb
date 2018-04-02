@@ -15,14 +15,16 @@ module SeleniumPage
       @url
     end
 
-    def self.element(element_name)
-      unless element_name.is_a? Symbol
-        raise Errors::UnexpectedElementName
+    def self.element(element_name, element_selector)
+      raise Errors::UnexpectedElementName unless element_name.is_a?(Symbol)
+      if method_defined?(element_name)
+        raise Errors::AlreadyDefinedElementName, element_name
       end
-      if self.method_defined?(element_name)
-        raise Errors::AlreadyDefinedElementName.new(element_name)
+      unless element_selector.is_a?(String)
+        raise Errors::UnexpectedElementSelector
       end
-      define_method(element_name) { }
+
+      define_method(element_name) { @page.find_element(:css, element_selector) }
     end
 
     def initialize(driver)

@@ -51,6 +51,22 @@ describe SeleniumPage::Page::Errors::UnexpectedElementName do
   end
 end
 
+describe SeleniumPage::Page::Errors::UnexpectedElementSelector do
+  it 'inherits from StandardError' do
+    expect(described_class.superclass).to be StandardError
+  end
+
+  describe '#message' do
+    subject { described_class.new }
+
+    it 'returns error message' do
+      expect(subject.message).to eql(
+        "Only 'String' are accepted as element_selector parameter"
+      )
+    end
+  end
+end
+
 describe SeleniumPage::Page::Errors::UnexpectedUrl do
   it 'inherits from StandardError' do
     expect(described_class.superclass).to be StandardError

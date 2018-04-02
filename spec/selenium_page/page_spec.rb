@@ -4,15 +4,17 @@ describe SeleniumPage::Page do
   let(:scheme_and_authority) { 'http://localhost:8080' }
   let(:url) { '/about' }
   let(:driver) { instance_double('Selenium::WebDriver::Driver') }
+  let(:element_instance) { instance_double('Selenium::WebDriver::Element') }
   let(:element_name) { :label_info }
+  let(:element_selector) { '#element_id' }
 
   # reset the class state
   after do
     if described_class.instance_variable_defined?(:@url)
       described_class.remove_instance_variable(:@url)
     end
-    if described_class.method_defined?(:@element_name)
-      described_class.remove_method(:@element_name)
+    if described_class.method_defined?(element_name)
+      described_class.remove_method(element_name)
     end
   end
 
@@ -46,9 +48,9 @@ describe SeleniumPage::Page do
   end
 
   describe '.element' do
-    subject { described_class.element(element_name) }
+    subject { described_class.element(element_name, element_selector) }
 
-    context 'when not a symbol' do
+    context 'when element_name not a symbol' do
       let(:element_name) { 'element_name' }
 
       it 'raises error' do
@@ -58,7 +60,7 @@ describe SeleniumPage::Page do
       end
     end
 
-    context 'when element_name is already defined' do
+    context 'when element_name already defined' do
       before do
         described_class.define_method(element_name) {}
       end
@@ -71,10 +73,28 @@ describe SeleniumPage::Page do
       end
     end
 
+    context 'when element_selector not a string' do
+      let(:element_selector) { 12_345 }
+
+      it 'raises error' do
+        expect { subject }.to raise_error(
+          SeleniumPage::Page::Errors::UnexpectedElementSelector
+        )
+      end
+    end
+
     it 'creates an instance method with element_name' do
       subject
 
       expect(described_class.method_defined?(element_name)).to be true
+
+      expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
+                                       .and_return(true)
+      expect(driver).to receive(:find_element).with(:css, element_selector)
+                                              .and_return(element_instance)
+
+      expect(described_class.new(driver).send(element_name))
+        .to eql(element_instance)
     end
   end
 

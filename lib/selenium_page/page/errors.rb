@@ -31,6 +31,13 @@ module SeleniumPage
         end
       end
 
+      # UnexpectedElementSelector
+      class UnexpectedElementSelector < StandardError
+        def message
+          "Only 'String' are accepted as element_selector parameter"
+        end
+      end
+
       # UnexpectedUrl
       class UnexpectedUrl < StandardError
         def message
