@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# # Timeout = 15 sec
+# wait = Selenium::WebDriver::Wait.new(:timeout => 15)
+
 module SeleniumPage
   # Page
   class Page

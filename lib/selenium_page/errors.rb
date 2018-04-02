@@ -9,5 +9,12 @@ module SeleniumPage
         "Only 'String' are accepted"
       end
     end
+
+    # UnexpectedWaitTime
+    class UnexpectedWaitTime < StandardError
+      def message
+        "Only 'Numeric' are accepted"
+      end
+    end
   end
 end
