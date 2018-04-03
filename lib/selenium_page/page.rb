@@ -27,7 +27,7 @@ module SeleniumPage
         raise Errors::UnexpectedElementSelector
       end
 
-      define_method(element_name) { @page.find_element(:css, element_selector) }
+      define_method(element_name) { find_element(element_selector) }
     end
 
     def initialize(driver)
@@ -47,6 +47,17 @@ module SeleniumPage
       raise Errors::SchemeAndAuthorityNotSet unless scheme_and_authority
 
       @page.get scheme_and_authority + self.class.url
+    end
+
+    private
+
+    def find_element(element_selector,
+                     waiter = Selenium::WebDriver::Wait.new(
+                       timeout: SeleniumPage.wait_time)
+                     )
+      waiter.until {
+        @page.find_element(:css, element_selector)
+      }
     end
   end
 end

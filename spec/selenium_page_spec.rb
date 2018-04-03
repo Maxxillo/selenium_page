@@ -73,4 +73,17 @@ describe SeleniumPage do
         .to eql(wait_time)
     end
   end
+
+  describe '.wait_time' do
+    it 'gets default @wait_time' do
+      expect(described_class.wait_time)
+        .to be(10)
+    end
+
+    it 'gets configured @wait_time' do
+      described_class.instance_variable_set(:@wait_time, wait_time)
+      expect(described_class.wait_time)
+        .to be(wait_time)
+    end
+  end
 end

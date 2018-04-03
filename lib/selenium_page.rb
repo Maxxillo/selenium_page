@@ -27,4 +27,8 @@ module SeleniumPage
 
     @wait_time = wait_time
   end
+
+  def self.wait_time
+    @wait_time
+  end
 end

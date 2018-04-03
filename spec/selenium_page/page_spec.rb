@@ -7,6 +7,7 @@ describe SeleniumPage::Page do
   let(:element_instance) { instance_double('Selenium::WebDriver::Element') }
   let(:element_name) { :label_info }
   let(:element_selector) { '#element_id' }
+  let(:waiter) { Selenium::WebDriver::Wait.new }
 
   # reset the class state
   after do
@@ -84,17 +85,23 @@ describe SeleniumPage::Page do
     end
 
     it 'creates an instance method with element_name' do
+      # expect(described_class).to receive(:find_element)
+      #   .with(element_name, 'find_element(element_selector)')
+      #   .and_call_original
+
       subject
+
 
       expect(described_class.method_defined?(element_name)).to be true
 
-      expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
-                                       .and_return(true)
-      expect(driver).to receive(:find_element).with(:css, element_selector)
-                                              .and_return(element_instance)
 
-      expect(described_class.new(driver).send(element_name))
-        .to eql(element_instance)
+      # expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
+      #                                  .and_return(true)
+      # expect(driver).to receive(:find_element).with(:css, element_selector)
+      #                                         .and_return(element_instance)
+      #
+      # expect(described_class.new(driver).send(element_name))
+      #   .to eql(element_instance)
     end
   end
 
@@ -179,6 +186,56 @@ describe SeleniumPage::Page do
 
         subject.get
       end
+    end
+  end
+
+  describe '#{element_name}' do
+    subject { described_class.new(driver) }
+
+    before do
+      described_class.element(element_name, element_selector)
+    end
+
+    it 'calls the Selenium::WebDriver::Driver correctly' do
+      expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
+                                       .and_return(true)
+      expect(subject).to receive(:find_element).with(element_selector)
+                                               .and_return(element_instance)
+
+      expect(subject.send(element_name))
+        .to eql(element_instance)
+    end
+  end
+
+  describe '#find_element' do
+    subject { described_class.new(driver) }
+
+    context 'when the timeout expires' do
+      it 'raise the original timeout error' do
+        expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
+                                         .and_return(true)
+
+        expect(waiter).to receive(:until).and_call_original
+        expect(driver).to receive(:find_element)
+          .with(:css, element_selector)
+          .and_raise(Selenium::WebDriver::Error::TimeOutError)
+        allow(Time).to receive(:now).and_return(0)
+
+        expect { subject.send(:find_element, element_selector, waiter) }
+          .to raise_error(Selenium::WebDriver::Error::TimeOutError)
+      end
+    end
+
+    it 'calls the Selenium::WebDriver::Driver wrapped in a wait' do
+      expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
+                                       .and_return(true)
+
+      expect(waiter).to receive(:until).and_call_original
+      expect(driver).to receive(:find_element).with(:css, element_selector)
+                                              .and_return(element_instance)
+
+      expect(subject.send(:find_element, element_selector, waiter))
+        .to eql(element_instance)
     end
   end
 end
