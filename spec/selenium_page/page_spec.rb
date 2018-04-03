@@ -85,23 +85,9 @@ describe SeleniumPage::Page do
     end
 
     it 'creates an instance method with element_name' do
-      # expect(described_class).to receive(:find_element)
-      #   .with(element_name, 'find_element(element_selector)')
-      #   .and_call_original
-
       subject
 
-
       expect(described_class.method_defined?(element_name)).to be true
-
-
-      # expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
-      #                                  .and_return(true)
-      # expect(driver).to receive(:find_element).with(:css, element_selector)
-      #                                         .and_return(element_instance)
-      #
-      # expect(described_class.new(driver).send(element_name))
-      #   .to eql(element_instance)
     end
   end
 
@@ -189,7 +175,7 @@ describe SeleniumPage::Page do
     end
   end
 
-  describe '#{element_name}' do
+  describe '#(element_name)' do
     subject { described_class.new(driver) }
 
     before do

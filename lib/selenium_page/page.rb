@@ -53,11 +53,9 @@ module SeleniumPage
 
     def find_element(element_selector,
                      waiter = Selenium::WebDriver::Wait.new(
-                       timeout: SeleniumPage.wait_time)
-                     )
-      waiter.until {
-        @page.find_element(:css, element_selector)
-      }
+                       timeout: SeleniumPage.wait_time
+                     ))
+      waiter.until { @page.find_element(:css, element_selector) }
     end
   end
 end
