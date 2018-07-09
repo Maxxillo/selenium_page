@@ -4,7 +4,7 @@ describe SeleniumPage::Page do
   let(:scheme_and_authority) { 'http://localhost:8080' }
   let(:url) { '/about' }
   let(:driver) { instance_double('Selenium::WebDriver::Driver') }
-  let(:element_instance) { instance_double('Selenium::WebDriver::Element') }
+  let(:element_instance) { instance_double('SeleniumPage::Element') }
   let(:element_name) { :label_info }
   let(:element_selector) { '#element_id' }
   let(:waiter) { Selenium::WebDriver::Wait.new }

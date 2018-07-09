@@ -7,6 +7,7 @@ require 'selenium-webdriver'
 module SeleniumPage
   require_relative 'selenium_page/errors'
   require_relative 'selenium_page/page'
+  require_relative 'selenium_page/element'
 
   @wait_time = 10
 
