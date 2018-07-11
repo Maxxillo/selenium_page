@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 describe SeleniumPage::Element do
-
-  let(:base_element_bridge) { instance_double(Selenium::WebDriver::Remote::Bridge) }
-  let(:base_element_id) { String.new }
-  let(:base_element) { Selenium::WebDriver::Element.new(base_element_bridge, base_element_id) }
+  let(:base_element_bridge) do
+    instance_double(Selenium::WebDriver::Remote::Bridge)
+  end
+  let(:base_element_id) { '' }
+  let(:base_element) do
+    Selenium::WebDriver::Element.new(base_element_bridge, base_element_id)
+  end
 
   subject { SeleniumPage::Element.new(base_element) }
 
@@ -19,10 +22,11 @@ describe SeleniumPage::Element do
   end
 
   it 'raise original error from the base element' do
-    allow(base_element).to receive(:click)
+    expect(base_element).to receive(:click)
       .and_raise(Selenium::WebDriver::Error::ElementNotVisibleError)
 
-    expect { subject.click }.to raise_error(Selenium::WebDriver::Error::ElementNotVisibleError)
+    expect { subject.click }
+      .to raise_error(Selenium::WebDriver::Error::ElementNotVisibleError)
   end
 
   it 'raise error if method is not found' do

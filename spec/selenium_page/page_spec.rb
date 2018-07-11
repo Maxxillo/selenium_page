@@ -187,7 +187,7 @@ describe SeleniumPage::Page do
       expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
                                        .and_return(true)
       expect(subject).to receive(:find_element).with(element_selector)
-                                              .and_return(element_instance)
+                                               .and_return(element_instance)
 
       expect(subject.send(element_name))
         .to eql(element_instance)
@@ -222,8 +222,8 @@ describe SeleniumPage::Page do
       expect(waiter).to receive(:until).and_call_original
       expect(driver).to receive(:find_element).with(:css, element_selector)
                                               .and_return(element_base_element)
-      expect(SeleniumPage::Element).to receive(:new).with(element_base_element)
-                                                    .and_return(element_instance)
+      expect(SeleniumPage::Element).to receive(:new)
+        .with(element_base_element).and_return(element_instance)
 
       expect(subject.send(:find_element, element_selector, waiter))
         .to be(element_instance)
