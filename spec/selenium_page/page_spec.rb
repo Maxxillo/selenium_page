@@ -3,10 +3,11 @@
 describe SeleniumPage::Page do
   let(:scheme_and_authority) { 'http://localhost:8080' }
   let(:url) { '/about' }
-  let(:driver) { instance_double('Selenium::WebDriver::Driver') }
-  let(:element_instance) { instance_double('SeleniumPage::Element') }
+  let(:driver) { instance_double(Selenium::WebDriver::Driver) }
   let(:element_name) { :label_info }
   let(:element_selector) { '#element_id' }
+  let(:element_base_element) { instance_double(Selenium::WebDriver::Element) }
+  let(:element_instance) { instance_double(SeleniumPage::Element) }
   let(:waiter) { Selenium::WebDriver::Wait.new }
 
   # reset the class state
@@ -176,17 +177,17 @@ describe SeleniumPage::Page do
   end
 
   describe '#(element_name)' do
-    subject { described_class.new(driver) }
-
     before do
       described_class.element(element_name, element_selector)
     end
+
+    subject { described_class.new(driver) }
 
     it 'calls the Selenium::WebDriver::Driver correctly' do
       expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
                                        .and_return(true)
       expect(subject).to receive(:find_element).with(element_selector)
-                                               .and_return(element_instance)
+                                              .and_return(element_instance)
 
       expect(subject.send(element_name))
         .to eql(element_instance)
@@ -194,7 +195,9 @@ describe SeleniumPage::Page do
   end
 
   describe '#find_element' do
-    subject { described_class.new(driver) }
+    subject do
+      described_class.new(driver)
+    end
 
     context 'when the timeout expires' do
       it 'raise the original timeout error' do
@@ -218,10 +221,12 @@ describe SeleniumPage::Page do
 
       expect(waiter).to receive(:until).and_call_original
       expect(driver).to receive(:find_element).with(:css, element_selector)
-                                              .and_return(element_instance)
+                                              .and_return(element_base_element)
+      expect(SeleniumPage::Element).to receive(:new).with(element_base_element)
+                                                    .and_return(element_instance)
 
       expect(subject.send(:find_element, element_selector, waiter))
-        .to eql(element_instance)
+        .to be(element_instance)
     end
   end
 end

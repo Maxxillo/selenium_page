@@ -18,7 +18,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'chromedriver-helper', '~> 1.2.0', '>= 1.2.0'
   s.add_development_dependency 'pry-byebug', '~> 3.6.0', '>= 3.6.0'
   s.add_development_dependency 'rspec', '~> 3.7.0', '>= 3.7.0'
-  s.add_development_dependency 'rubocop', '~> 0.54.0', '>= 0.54.0'
+  s.add_development_dependency 'rubocop', '~> 0.56.0', '>= 0.56.0'
+  s.add_development_dependency 'rubocop-rspec', '~> 1.27.0', '>= 1.27.0'
   s.add_development_dependency 'simplecov', '~> 0.16.0', '>= 0.16.0'
   s.add_development_dependency 'yard', '~> 0.9.0', '>= 0.9.0'
 end
