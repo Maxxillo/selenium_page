@@ -18,7 +18,9 @@ module SeleniumPage
       @url
     end
 
-    def self.element(element_name, element_selector)
+    def self.element(element_name, element_selector, &block)
+      # block_given?
+      binding.pry
       raise Errors::UnexpectedElementName unless element_name.is_a?(Symbol)
       if method_defined?(element_name)
         raise Errors::AlreadyDefinedElementName, element_name
@@ -27,7 +29,11 @@ module SeleniumPage
         raise Errors::UnexpectedElementSelector
       end
 
-      define_method(element_name) { find_element(element_selector) }
+      # the method will need to be moved to a module maybe ? and injected into page and element ?
+      define_method(element_name) {
+        binding.pry
+        find_element(element_selector, &block)
+      }
     end
 
     def initialize(driver)
@@ -54,10 +60,12 @@ module SeleniumPage
     def find_element(element_selector,
                      waiter = Selenium::WebDriver::Wait.new(
                        timeout: SeleniumPage.wait_time
-                     ))
-
+                     ), &block)
+                     binding.pry
       waiter.until do
-        SeleniumPage::Element.new(@page.find_element(:css, element_selector))
+        result = SeleniumPage::Element.new(@page.find_element(:css, element_selector))
+        binding.pry
+        result.element(element_selector, &block)
       end
     end
   end
