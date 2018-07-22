@@ -20,7 +20,7 @@ module SeleniumPage
 
     def self.element(element_name, element_selector, &block)
       # block_given?
-      binding.pry
+      #binding.pry
       raise Errors::UnexpectedElementName unless element_name.is_a?(Symbol)
       if method_defined?(element_name)
         raise Errors::AlreadyDefinedElementName, element_name
@@ -57,15 +57,19 @@ module SeleniumPage
 
     private
 
+    # define_method(element_name) do
+    #   yield if block_given?
+    # end
+
     def find_element(element_selector,
                      waiter = Selenium::WebDriver::Wait.new(
                        timeout: SeleniumPage.wait_time
                      ), &block)
-                     binding.pry
+      binding.pry
       waiter.until do
         result = SeleniumPage::Element.new(@page.find_element(:css, element_selector))
-        binding.pry
-        result.element(element_selector, &block)
+        #binding.pry
+        result.add_children(element_selector, &block)
       end
     end
   end

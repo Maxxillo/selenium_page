@@ -25,9 +25,14 @@ module SeleniumPage
       base_element.respond_to?(called_method) || super
     end
 
-    def element(parent_selector, *args, &block)
+    def add_children(parent_selector, &block)
       binding.pry
-      define_method(element_name) {
+      instance_exec(parent_selector, &block)
+    end
+
+    def element(element_name, element_selector, *args, &block)
+      binding.pry
+      define_singleton_method(element_name) {
         binding.pry
         find_element(element_selector, &block)
       }
