@@ -3,7 +3,9 @@
 module SeleniumPage
   # Element
   class Element
-    def initialize(base_element)
+    def initialize(driver, base_element)
+      raise Errors::WrongDriver unless driver.is_a? Selenium::WebDriver::Driver
+      @page = driver
       # FIXME: base element needs to be a Selenium::WebDriver::Element
       @base_element = base_element
     end
@@ -11,7 +13,6 @@ module SeleniumPage
     attr_reader :base_element
 
     def method_missing(called_method, *args, &block)
-      binding.pry
       # FIXME: this should catch some specific methods (to_s ?)
       if base_element.respond_to?(called_method)
         base_element.send(called_method, *args, &block)
@@ -26,16 +27,19 @@ module SeleniumPage
     end
 
     def add_children(parent_selector, &block)
-      binding.pry
-      instance_exec(parent_selector, &block)
+      @parent_selector = parent_selector
+      instance_exec(&block) if block_given?
     end
 
-    def element(element_name, element_selector, *args, &block)
-      binding.pry
-      define_singleton_method(element_name) {
-        binding.pry
-        find_element(element_selector, &block)
-      }
+    def element(element_name, element_selector, &block)
+      define_singleton_method(element_name) do
+        selector = @parent_selector + ' ' + element_selector
+        if block_given?
+          find_element(selector, &block)
+        else
+          find_element(selector)
+        end
+      end
     end
 
     private
@@ -44,11 +48,12 @@ module SeleniumPage
                      waiter = Selenium::WebDriver::Wait.new(
                        timeout: SeleniumPage.wait_time
                      ), &block)
-                     binding.pry
       waiter.until do
-        result = SeleniumPage::Element.new(@page.find_element(:css, element_selector))
-        binding.pry
-        result.element(element_selector, &block)
+        result = SeleniumPage::Element.new(
+          @page, @page.find_element(:css, element_selector)
+        )
+        result.add_children(element_selector, &block)
+        result
       end
     end
   end
