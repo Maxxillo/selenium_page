@@ -5,25 +5,19 @@ module SeleniumPage
   class Element
     # Errors
     class Errors
-      # # AlreadyDefinedElementName
-      # class AlreadyDefinedElementName < StandardError
-      #   def initialize(element_name)
-      #     @element_name = element_name
-      #   end
-      #
-      #   def message
-      #     "The element '#{@element_name}' is already defined"
-      #   end
-      # end
-      #
-      # # SchemeAndAuthorityNotSet
-      # class SchemeAndAuthorityNotSet < StandardError
-      #   def message
-      #     'Please set scheme_and_authority for SeleniumPage' \
-      #     " with '.configure_scheme_and_authority'"
-      #   end
-      # end
+      # WrongBaseElement
+      class WrongBaseElement < StandardError
+        def message
+          "Only 'Selenium::WebDriver::Element' are accepted as base_element parameter"
+        end
+      end
 
+      # WrongDriver
+      class WrongDriver < StandardError
+        def message
+          "Only 'Selenium::WebDriver::Driver' are accepted as driver parameter"
+        end
+      end
     end
   end
 end

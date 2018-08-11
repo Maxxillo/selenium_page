@@ -15,10 +15,6 @@ module SeleniumPage
       @url
     end
 
-    def self.list_of_elements
-      @list_of_elements ||= {}
-    end
-
     def self.element(element_name, element_selector, &block)
       define_method(element_name) do
         if block_given?
@@ -29,10 +25,20 @@ module SeleniumPage
       end
     end
 
+    def self.elements(collection_name, collection_selector, &block)
+      define_method(collection_name) do
+        if block_given?
+          find_elements(collection_selector, &block)
+        else
+          find_elements(collection_selector)
+        end
+      end
+    end
+
     def initialize(driver)
       raise Errors::WrongDriver unless driver.is_a? Selenium::WebDriver::Driver
 
-      @page = driver
+      @driver = driver
     end
 
     def url
@@ -45,7 +51,7 @@ module SeleniumPage
       scheme_and_authority = SeleniumPage.scheme_and_authority
       raise Errors::SchemeAndAuthorityNotSet unless scheme_and_authority
 
-      @page.get scheme_and_authority + self.class.url
+      @driver.get scheme_and_authority + self.class.url
     end
 
     private
@@ -56,9 +62,23 @@ module SeleniumPage
                      ), &block)
       waiter.until do
         result = SeleniumPage::Element.new(
-          @page, @page.find_element(:css, element_selector)
+          @driver, @driver.find_element(:css, element_selector)
         )
-        result.add_children(element_selector, &block)
+        result.add_childrens(element_selector, &block)
+        result
+      end
+    end
+
+    def find_elements(collection_selector,
+                     waiter = Selenium::WebDriver::Wait.new(
+                       timeout: SeleniumPage.wait_time
+                     ), &block)
+      waiter.until do
+        selenium_result = @driver.find_elements(:css, collection_selector)
+        result = SeleniumPage::Element.new(
+          @driver, @driver.find_element(:css, element_selector)
+        )
+        result.add_childrens(element_selector, &block)
         result
       end
     end

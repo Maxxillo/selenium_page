@@ -1,35 +1,155 @@
 # frozen_string_literal: true
 
 describe SeleniumPage::Element do
-  let(:base_element_bridge) do
-    instance_double(Selenium::WebDriver::Remote::Bridge)
+  let(:driver) { instance_double(Selenium::WebDriver::Driver) }
+  let(:base_element) { instance_double(Selenium::WebDriver::Element) }
+
+  subject { SeleniumPage::Element.new(driver, base_element) }
+
+  describe '.initialize' do
+    context 'when driver is not a Selenium::WebDriver::Driver' do
+      it 'raises error' do
+        expect { subject }.to raise_error(
+          SeleniumPage::Element::Errors::WrongDriver
+        )
+      end
+    end
+
+    context 'when base_element is not a Selenium::WebDriver::Element' do
+      it 'raises error' do
+        expect(driver).to receive(:is_a?)
+          .with(Selenium::WebDriver::Driver)
+          .and_return(true)
+
+        expect { subject }.to raise_error(
+          SeleniumPage::Element::Errors::WrongBaseElement
+        )
+      end
+    end
+
+    it 'assign instance variables' do
+      expect(driver).to receive(:is_a?)
+        .with(Selenium::WebDriver::Driver)
+        .and_return(true)
+      expect(base_element).to receive(:is_a?)
+        .with(Selenium::WebDriver::Element)
+        .and_return(true)
+
+      result = subject
+      expect(result.instance_variable_get(:@driver)).to be driver
+      expect(result.instance_variable_get(:@base_element)).to be base_element
+    end
   end
-  let(:base_element_id) { '' }
-  let(:base_element) do
-    Selenium::WebDriver::Element.new(base_element_bridge, base_element_id)
+
+  describe '#base_element' do
+    it 'expose base element' do
+      expect(driver).to receive(:is_a?)
+        .with(Selenium::WebDriver::Driver)
+        .and_return(true)
+      expect(base_element).to receive(:is_a?)
+        .with(Selenium::WebDriver::Element)
+        .and_return(true)
+
+      expect(subject.base_element).to be(base_element)
+    end
   end
 
-  subject { SeleniumPage::Element.new(base_element) }
+  describe '#driver' do
+    it 'expose driver' do
+      expect(driver).to receive(:is_a?)
+        .with(Selenium::WebDriver::Driver)
+        .and_return(true)
+      expect(base_element).to receive(:is_a?)
+        .with(Selenium::WebDriver::Element)
+        .and_return(true)
 
-  it 'expose the base element' do
-    expect(subject.base_element).to be(base_element)
+      expect(subject.driver).to be(driver)
+    end
   end
 
-  it 'pass the methods to the base element' do
-    expect(base_element).to receive(:text)
+  describe '#method_missing' do
+    context 'when the base element does not implement the method' do
+      it 'raise error' do
+        expect(driver).to receive(:is_a?)
+          .with(Selenium::WebDriver::Driver)
+          .and_return(true)
+        expect(base_element).to receive(:is_a?)
+          .with(Selenium::WebDriver::Element)
+          .and_return(true)
 
-    subject.text
+        expect { subject.not_existing_method }.to raise_error(NoMethodError)
+      end
+    end
+
+    it 'delegate the method to the base element' do
+      expect(driver).to receive(:is_a?)
+        .with(Selenium::WebDriver::Driver)
+        .and_return(true)
+      expect(base_element).to receive(:is_a?)
+        .with(Selenium::WebDriver::Element)
+        .and_return(true)
+
+      expect(base_element).to receive(:text)
+
+      subject.text
+    end
+
+    it 'raise original error from the base element' do
+      expect(driver).to receive(:is_a?)
+        .with(Selenium::WebDriver::Driver)
+        .and_return(true)
+      expect(base_element).to receive(:is_a?)
+        .with(Selenium::WebDriver::Element)
+        .and_return(true)
+
+      expect(base_element).to receive(:click)
+        .and_raise(Selenium::WebDriver::Error::ElementNotVisibleError)
+
+      expect { subject.click }
+        .to raise_error(Selenium::WebDriver::Error::ElementNotVisibleError)
+    end
   end
 
-  it 'raise original error from the base element' do
-    expect(base_element).to receive(:click)
-      .and_raise(Selenium::WebDriver::Error::ElementNotVisibleError)
+  describe '#respond_to?' do
+    it 'return false if the method if it is not handled' do
+      expect(driver).to receive(:is_a?)
+        .with(Selenium::WebDriver::Driver)
+        .and_return(true)
+      expect(base_element).to receive(:is_a?)
+        .with(Selenium::WebDriver::Element)
+        .and_return(true)
 
-    expect { subject.click }
-      .to raise_error(Selenium::WebDriver::Error::ElementNotVisibleError)
+      expect(subject.respond_to?(:not_existing_method)).to be false
+    end
+
+    it 'return true if base_element responds to the method' do
+      expect(driver).to receive(:is_a?)
+        .with(Selenium::WebDriver::Driver)
+        .and_return(true)
+      expect(base_element).to receive(:is_a?)
+        .with(Selenium::WebDriver::Element)
+        .and_return(true)
+
+      expect(base_element).to receive(:respond_to?)
+        .with(:click)
+        .and_return(true)
+
+      expect(subject.respond_to?(:click)).to be true
+    end
+
+    it 'return true if parent respond to the method' do
+      expect(driver).to receive(:is_a?)
+        .with(Selenium::WebDriver::Driver)
+        .and_return(true)
+      expect(base_element).to receive(:is_a?)
+        .with(Selenium::WebDriver::Element)
+        .and_return(true)
+
+      expect(subject.respond_to?(:class)).to be true
+    end
   end
 
-  it 'raise error if method is not found' do
-    expect { subject.not_existing }.to raise_error(NoMethodError)
+  describe '#add_childrens' do
+    
   end
 end

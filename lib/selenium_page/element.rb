@@ -3,17 +3,20 @@
 module SeleniumPage
   # Element
   class Element
+    require_relative 'element/errors'
+
     def initialize(driver, base_element)
       raise Errors::WrongDriver unless driver.is_a? Selenium::WebDriver::Driver
-      @page = driver
-      # FIXME: base element needs to be a Selenium::WebDriver::Element
+      @driver = driver
+      raise Errors::WrongBaseElement unless base_element.is_a? Selenium::WebDriver::Element
       @base_element = base_element
     end
 
+    attr_reader :driver
     attr_reader :base_element
 
     def method_missing(called_method, *args, &block)
-      # FIXME: this should catch some specific methods (to_s ?)
+      # FIXME: should this catch some specific methods (to_s ?) ?
       if base_element.respond_to?(called_method)
         base_element.send(called_method, *args, &block)
       else
@@ -21,12 +24,14 @@ module SeleniumPage
       end
     end
 
+    # this fix the calls to :respond_to? in case of delegation to base_element
+    # the method will stay private
     # rubocop best practice suggestion
     def respond_to_missing?(called_method, *)
       base_element.respond_to?(called_method) || super
     end
 
-    def add_children(parent_selector, &block)
+    def add_childrens(parent_selector, &block)
       @parent_selector = parent_selector
       instance_exec(&block) if block_given?
     end
@@ -34,6 +39,17 @@ module SeleniumPage
     def element(element_name, element_selector, &block)
       define_singleton_method(element_name) do
         selector = @parent_selector + ' ' + element_selector
+        if block_given?
+          find_element(selector, &block)
+        else
+          find_element(selector)
+        end
+      end
+    end
+
+    def elements(collection_name, collection_selector, &block)
+      define_singleton_method(collection_name) do
+        selector = @parent_selector + ' ' + collection_selector
         if block_given?
           find_element(selector, &block)
         else
@@ -50,9 +66,26 @@ module SeleniumPage
                      ), &block)
       waiter.until do
         result = SeleniumPage::Element.new(
-          @page, @page.find_element(:css, element_selector)
+          @driver, @driver.find_element(:css, element_selector)
         )
-        result.add_children(element_selector, &block)
+        result.add_childrens(element_selector, &block)
+        result
+      end
+    end
+
+    def find_elements(collection_selector,
+                     waiter = Selenium::WebDriver::Wait.new(
+                       timeout: SeleniumPage.wait_time
+                     ), &block)
+      waiter.until do
+        selenium_result = @driver.find_elements(:css, collection_selector)
+        result = []
+        selenium_result.each do |selenium_element|
+          result << SeleniumPage::Element.new(@driver, selenium_element)
+        end
+        result.each do |selenium_page_element|
+          selenium_page_element.add_childrens(collection_selector, &block)
+        end
         result
       end
     end
