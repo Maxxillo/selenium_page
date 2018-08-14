@@ -16,6 +16,10 @@ module SeleniumPage
     end
 
     def self.element(element_name, element_selector, &block)
+      raise Errors::UnexpectedElementName unless element_name.is_a? Symbol
+      raise Errors::UnexpectedElementSelector unless element_selector.is_a? String
+      raise Errors::AlreadyDefinedElementName.new(element_name) if instance_methods.include?(element_name)
+
       define_method(element_name) do
         if block_given?
           find_element(element_selector, &block)
@@ -26,6 +30,10 @@ module SeleniumPage
     end
 
     def self.elements(collection_name, collection_selector, &block)
+      raise Errors::UnexpectedElementName unless collection_name.is_a? Symbol
+      raise Errors::UnexpectedElementSelector unless collection_selector.is_a? String
+      raise Errors::AlreadyDefinedElementName.new(collection_name) if instance_methods.include?(collection_name)
+
       define_method(collection_name) do
         if block_given?
           find_elements(collection_selector, &block)

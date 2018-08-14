@@ -8,6 +8,8 @@ describe SeleniumPage::Page do
   let(:element_selector) { '#element_id' }
   let(:element_base_element) { instance_double(Selenium::WebDriver::Element) }
   let(:element_instance) { instance_double(SeleniumPage::Element) }
+  let(:collection_name) { :list_result }
+  let(:collection_selector) { 'a.collection_class' }
   let(:waiter) { Selenium::WebDriver::Wait.new }
 
   # reset the class state
@@ -89,6 +91,49 @@ describe SeleniumPage::Page do
       subject
 
       expect(described_class.method_defined?(element_name)).to be true
+    end
+  end
+
+  describe '.elements' do
+    subject { described_class.elements(collection_name, collection_selector) }
+
+    context 'when collection_name not a symbol' do
+      let(:collection_name) { 'collection_name' }
+
+      it 'raises error' do
+        expect { subject }.to raise_error(
+          SeleniumPage::Page::Errors::UnexpectedElementName
+        )
+      end
+    end
+
+    context 'when collection_name already defined' do
+      before do
+        described_class.define_method(collection_name) {}
+      end
+
+      it 'raises error' do
+        expect { subject }.to raise_error(
+          SeleniumPage::Page::Errors::AlreadyDefinedElementName,
+          /#{collection_name}/
+        )
+      end
+    end
+
+    context 'when collection_selector not a string' do
+      let(:collection_selector) { 12_345 }
+
+      it 'raises error' do
+        expect { subject }.to raise_error(
+          SeleniumPage::Page::Errors::UnexpectedElementSelector
+        )
+      end
+    end
+
+    it 'creates an instance method with collection_name' do
+      subject
+
+      expect(described_class.method_defined?(collection_name)).to be true
     end
   end
 
