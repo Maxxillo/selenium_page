@@ -21,7 +21,9 @@ describe 'nested elements' do
     require_relative 'support/myweb'
 
     driver = instance_double(Selenium::WebDriver::Driver)
-    allow(driver).to receive(:is_a?).and_return true
+    allow(driver).to receive(:is_a?)
+                      .with(Selenium::WebDriver::Driver)
+                      .and_return true
 
     myweb = MyWeb.new(driver)
 
@@ -30,6 +32,9 @@ describe 'nested elements' do
     expect(driver).to receive(:find_element)
       .with(:css, outer_name_selector)
       .and_return(outer_name_selenium)
+    expect(outer_name_selenium).to receive(:is_a?)
+                                    .with(Selenium::WebDriver::Element)
+                                    .and_return true
 
     outer_name = myweb.outer_name
 
