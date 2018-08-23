@@ -223,20 +223,38 @@ describe SeleniumPage::Page do
   end
 
   describe '#(element_name)' do
-    before do
-      described_class.element(element_name, element_selector)
-    end
-
     subject { described_class.new(driver) }
 
-    it 'calls the Selenium::WebDriver::Driver correctly' do
-      expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
-                                       .and_return(true)
-      expect(subject).to receive(:find_element).with(element_selector)
-                                               .and_return(element_instance)
+    context 'when without a block' do
+      before do
+        described_class.element(element_name, element_selector)
+      end
 
-      expect(subject.send(element_name))
-        .to eql(element_instance)
+      it 'calls the Selenium::WebDriver::Driver correctly' do
+        expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
+                                         .and_return(true)
+        expect(subject).to receive(:find_element).with(element_selector)
+                                                 .and_return(element_instance)
+
+        expect(subject.send(element_name))
+          .to eql(element_instance)
+      end
+    end
+
+    context 'when without a block' do
+      before do
+        described_class.element(element_name, element_selector, &block_childrens)
+      end
+
+      it 'calls the Selenium::WebDriver::Driver correctly' do
+        expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
+                                         .and_return(true)
+        expect(subject).to receive(:find_element).with(element_selector, &block_childrens)
+                                                 .and_return(element_instance)
+
+        expect(subject.send(element_name))
+          .to eql(element_instance)
+      end
     end
   end
 
