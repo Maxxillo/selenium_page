@@ -11,6 +11,7 @@ describe SeleniumPage::Page do
   let(:collection_name) { :list_result }
   let(:collection_selector) { 'a.collection_class' }
   let(:waiter) { Selenium::WebDriver::Wait.new }
+  let(:block_childrens) { {} }
 
   # reset the class state
   after do
@@ -148,12 +149,12 @@ describe SeleniumPage::Page do
       end
     end
 
-    it 'sets @page' do
+    it 'sets @driver' do
       expect(driver).to receive(:is_a?)
         .with(Selenium::WebDriver::Driver)
         .and_return(true)
 
-      expect(subject.instance_variable_get(:@page))
+      expect(subject.instance_variable_get(:@driver))
         .to be(driver)
     end
   end
@@ -208,7 +209,7 @@ describe SeleniumPage::Page do
         end
       end
 
-      it 'calls @page.get' do
+      it 'calls @driver.get' do
         expect(SeleniumPage).to receive(:scheme_and_authority)
           .and_return(scheme_and_authority)
 
@@ -268,9 +269,11 @@ describe SeleniumPage::Page do
       expect(driver).to receive(:find_element).with(:css, element_selector)
                                               .and_return(element_base_element)
       expect(SeleniumPage::Element).to receive(:new)
-        .with(element_base_element).and_return(element_instance)
+        .with(driver, element_base_element).and_return(element_instance)
+      expect(element_instance).to receive(:add_childrens)
+                                    .with(element_selector, &block_childrens)
 
-      expect(subject.send(:find_element, element_selector, waiter))
+      expect(subject.send(:find_element, element_selector, waiter, &block_childrens))
         .to be(element_instance)
     end
   end
