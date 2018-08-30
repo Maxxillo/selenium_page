@@ -6,10 +6,12 @@ describe SeleniumPage::Page do
   let(:driver) { instance_double(Selenium::WebDriver::Driver) }
   let(:element_name) { :label_info }
   let(:element_selector) { '#element_id' }
-  let(:element_base_element) { instance_double(Selenium::WebDriver::Element) }
+  let(:element_base_element_1) { instance_double(Selenium::WebDriver::Element) }
+  let(:element_base_element_2) { instance_double(Selenium::WebDriver::Element) }
   let(:element_instance) { instance_double(SeleniumPage::Element) }
   let(:collection_name) { :list_result }
   let(:collection_selector) { 'a.collection_class' }
+  let(:collection_base_elements) { [element_base_element_1, element_base_element_2] }
   let(:waiter) { Selenium::WebDriver::Wait.new }
   let(:block_childrens) { {} }
 
@@ -20,6 +22,9 @@ describe SeleniumPage::Page do
     end
     if described_class.method_defined?(element_name)
       described_class.remove_method(element_name)
+    end
+    if described_class.method_defined?(collection_name)
+      described_class.remove_method(collection_name)
     end
   end
 
@@ -258,6 +263,42 @@ describe SeleniumPage::Page do
     end
   end
 
+  describe '#(collection_name)' do
+    subject { described_class.new(driver) }
+
+    context 'when without a block' do
+      before do
+        described_class.elements(collection_name, collection_selector)
+      end
+
+      it 'calls the Selenium::WebDriver::Driver correctly' do
+        expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
+                                         .and_return(true)
+        expect(subject).to receive(:find_elements).with(collection_selector)
+                                                 .and_return(element_instance)
+
+        expect(subject.send(collection_name))
+          .to eql(element_instance)
+      end
+    end
+
+    context 'when without a block' do
+      before do
+        described_class.elements(collection_name, collection_selector, &block_childrens)
+      end
+
+      it 'calls the Selenium::WebDriver::Driver correctly' do
+        expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
+                                         .and_return(true)
+        expect(subject).to receive(:find_elements).with(collection_selector, &block_childrens)
+                                                 .and_return(element_instance)
+
+        expect(subject.send(collection_name))
+          .to eql(element_instance)
+      end
+    end
+  end
+
   describe '#find_element' do
     subject do
       described_class.new(driver)
@@ -285,9 +326,9 @@ describe SeleniumPage::Page do
 
       expect(waiter).to receive(:until).and_call_original
       expect(driver).to receive(:find_element).with(:css, element_selector)
-                                              .and_return(element_base_element)
+                                              .and_return(element_base_element_1)
       expect(SeleniumPage::Element).to receive(:new)
-        .with(driver, element_base_element).and_return(element_instance)
+        .with(driver, element_base_element_1).and_return(element_instance)
       expect(element_instance).to receive(:add_childrens)
                                     .with(element_selector, &block_childrens)
 

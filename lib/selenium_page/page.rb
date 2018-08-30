@@ -83,10 +83,13 @@ module SeleniumPage
                      ), &block)
       waiter.until do
         selenium_result = @driver.find_elements(:css, collection_selector)
-        result = SeleniumPage::Element.new(
-          @driver, @driver.find_element(:css, element_selector)
-        )
-        result.add_childrens(element_selector, &block)
+        result = []
+        selenium_result.each do |selenium_element|
+          result << SeleniumPage::Element.new(@driver, selenium_element)
+        end
+        result.each do |selenium_page_element|
+          selenium_page_element.add_childrens(collection_selector, &block)
+        end
         result
       end
     end

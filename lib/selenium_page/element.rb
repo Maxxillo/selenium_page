@@ -51,9 +51,9 @@ module SeleniumPage
       define_singleton_method(collection_name) do
         selector = @parent_selector + ' ' + collection_selector
         if block_given?
-          find_element(selector, &block)
+          find_elements(selector, &block)
         else
-          find_element(selector)
+          find_elements(selector)
         end
       end
     end
