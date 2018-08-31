@@ -6,13 +6,19 @@ describe SeleniumPage::Page do
   let(:driver) { instance_double(Selenium::WebDriver::Driver) }
   let(:element_name) { :label_info }
   let(:element_selector) { '#element_id' }
-  let(:element_base_element_1) { instance_double(Selenium::WebDriver::Element) }
-  let(:element_base_element_2) { instance_double(Selenium::WebDriver::Element) }
+  let(:element_base_element_1) do
+    instance_double(Selenium::WebDriver::Element)
+  end
+  let(:element_base_element_2) do
+    instance_double(Selenium::WebDriver::Element)
+  end
   let(:element_instance_1) { instance_double(SeleniumPage::Element) }
   let(:element_instance_2) { instance_double(SeleniumPage::Element) }
   let(:collection_name) { :list_result }
   let(:collection_selector) { 'a.collection_class' }
-  let(:collection_base_elements) { [element_base_element_1, element_base_element_2] }
+  let(:collection_base_elements) do
+    [element_base_element_1, element_base_element_2]
+  end
   let(:waiter) { Selenium::WebDriver::Wait.new }
   let(:block_childrens) { {} }
 
@@ -249,14 +255,17 @@ describe SeleniumPage::Page do
 
     context 'when without a block' do
       before do
-        described_class.element(element_name, element_selector, &block_childrens)
+        described_class.element(element_name,
+                                element_selector,
+                                &block_childrens)
       end
 
       it 'calls the Selenium::WebDriver::Driver correctly' do
-        expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
-                                         .and_return(true)
-        expect(subject).to receive(:find_element).with(element_selector, &block_childrens)
-                                                 .and_return(element_instance_1)
+        expect(driver).to receive(:is_a?)
+          .with(Selenium::WebDriver::Driver).and_return(true)
+        expect(subject).to receive(:find_element)
+          .with(element_selector, &block_childrens)
+          .and_return(element_instance_1)
 
         expect(subject.send(element_name))
           .to eql(element_instance_1)
@@ -273,10 +282,10 @@ describe SeleniumPage::Page do
       end
 
       it 'calls the Selenium::WebDriver::Driver correctly' do
-        expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
-                                         .and_return(true)
-        expect(subject).to receive(:find_elements).with(collection_selector)
-                                                  .and_return(element_instance_1)
+        expect(driver).to receive(:is_a?)
+          .with(Selenium::WebDriver::Driver).and_return(true)
+        expect(subject).to receive(:find_elements)
+          .with(collection_selector).and_return(element_instance_1)
 
         expect(subject.send(collection_name))
           .to eql(element_instance_1)
@@ -285,14 +294,17 @@ describe SeleniumPage::Page do
 
     context 'when without a block' do
       before do
-        described_class.elements(collection_name, collection_selector, &block_childrens)
+        described_class.elements(collection_name,
+                                 collection_selector,
+                                 &block_childrens)
       end
 
       it 'calls the Selenium::WebDriver::Driver correctly' do
-        expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
-                                         .and_return(true)
-        expect(subject).to receive(:find_elements).with(collection_selector, &block_childrens)
-                                                  .and_return(element_instance_1)
+        expect(driver).to receive(:is_a?)
+          .with(Selenium::WebDriver::Driver).and_return(true)
+        expect(subject).to receive(:find_elements)
+          .with(collection_selector, &block_childrens)
+          .and_return(element_instance_1)
 
         expect(subject.send(collection_name))
           .to eql(element_instance_1)
@@ -322,18 +334,19 @@ describe SeleniumPage::Page do
     end
 
     it 'calls the Selenium::WebDriver::Driver wrapped in a wait' do
-      expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
-                                       .and_return(true)
+      expect(driver).to receive(:is_a?)
+        .with(Selenium::WebDriver::Driver).and_return(true)
 
       expect(waiter).to receive(:until).and_call_original
-      expect(driver).to receive(:find_element).with(:css, element_selector)
-                                              .and_return(element_base_element_1)
+      expect(driver).to receive(:find_element)
+        .with(:css, element_selector).and_return(element_base_element_1)
       expect(SeleniumPage::Element).to receive(:new)
         .with(driver, element_base_element_1).and_return(element_instance_1)
       expect(element_instance_1).to receive(:add_childrens)
         .with(element_selector, &block_childrens)
 
-      expect(subject.send(:find_element, element_selector, waiter, &block_childrens))
+      expect(subject.send(:find_element, element_selector,
+                          waiter, &block_childrens))
         .to be(element_instance_1)
     end
   end
@@ -345,8 +358,8 @@ describe SeleniumPage::Page do
 
     context 'when the timeout expires' do
       it 'raise the original timeout error' do
-        expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
-                                         .and_return(true)
+        expect(driver).to receive(:is_a?)
+          .with(Selenium::WebDriver::Driver).and_return(true)
 
         expect(waiter).to receive(:until).and_call_original
         expect(driver).to receive(:find_elements)
@@ -364,8 +377,8 @@ describe SeleniumPage::Page do
                                        .and_return(true)
 
       expect(waiter).to receive(:until).and_call_original
-      expect(driver).to receive(:find_elements).with(:css, collection_selector)
-                                               .and_return(collection_base_elements)
+      expect(driver).to receive(:find_elements)
+        .with(:css, collection_selector).and_return(collection_base_elements)
 
       expect(SeleniumPage::Element).to receive(:new)
         .with(driver, element_base_element_1).and_return(element_instance_1)
@@ -377,7 +390,8 @@ describe SeleniumPage::Page do
       expect(element_instance_2).to receive(:add_childrens)
         .with(collection_selector, &block_childrens)
 
-      expect(subject.send(:find_elements, collection_selector, waiter, &block_childrens))
+      expect(subject.send(:find_elements, collection_selector,
+                          waiter, &block_childrens))
         .to eql([element_instance_1, element_instance_2])
     end
   end

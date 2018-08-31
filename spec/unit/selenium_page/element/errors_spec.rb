@@ -10,7 +10,8 @@ describe SeleniumPage::Element::Errors::WrongBaseElement do
 
     it 'returns error message' do
       expect(subject.message).to eql(
-        "Only 'Selenium::WebDriver::Element' are accepted as base_element parameter"
+        "Only 'Selenium::WebDriver::Element' are accepted " \
+        'as base_element parameter'
       )
     end
   end
