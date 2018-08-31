@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe SeleniumPage::Element::Errors::WrongBaseElement do
   it 'inherits from StandardError' do
     expect(described_class.superclass).to be StandardError
@@ -13,7 +15,6 @@ describe SeleniumPage::Element::Errors::WrongBaseElement do
     end
   end
 end
-
 
 describe SeleniumPage::Element::Errors::WrongDriver do
   it 'inherits from StandardError' do

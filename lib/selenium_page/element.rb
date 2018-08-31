@@ -74,9 +74,9 @@ module SeleniumPage
     end
 
     def find_elements(collection_selector,
-                     waiter = Selenium::WebDriver::Wait.new(
-                       timeout: SeleniumPage.wait_time
-                     ), &block)
+                      waiter = Selenium::WebDriver::Wait.new(
+                        timeout: SeleniumPage.wait_time
+                      ), &block)
       waiter.until do
         selenium_result = @driver.find_elements(:css, collection_selector)
         result = []

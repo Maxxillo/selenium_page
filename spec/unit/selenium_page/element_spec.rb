@@ -8,7 +8,7 @@ describe SeleniumPage::Element do
   let(:children_name) { :children_name }
   let(:children_selector) { '.children_selector' }
   let(:block_childrens) do
-    Proc.new { element :children_name, '.children_selector' }
+    proc { element :children_name, '.children_selector' }
   end
 
   let(:element_selector) { '.element_selector' }
@@ -332,7 +332,7 @@ describe SeleniumPage::Element do
       expect(SeleniumPage::Element).to receive(:new)
         .with(driver, element_base_element_1).and_return(element_instance_1)
       expect(element_instance_1).to receive(:add_childrens)
-                                    .with(element_selector)
+        .with(element_selector)
 
       expect(target.send(:find_element, element_selector, waiter, &block_childrens))
         .to be(element_instance_1)
@@ -373,7 +373,7 @@ describe SeleniumPage::Element do
 
       expect(waiter).to receive(:until).and_call_original
       expect(driver).to receive(:find_elements).with(:css, collection_selector)
-                                              .and_return(collection_base_elements)
+                                               .and_return(collection_base_elements)
 
       expect(SeleniumPage::Element).to receive(:new)
         .with(driver, element_base_element_1).and_return(element_instance_1)
@@ -381,9 +381,9 @@ describe SeleniumPage::Element do
         .with(driver, element_base_element_2).and_return(element_instance_2)
 
       expect(element_instance_1).to receive(:add_childrens)
-                                    .with(collection_selector)
+        .with(collection_selector)
       expect(element_instance_2).to receive(:add_childrens)
-                                    .with(collection_selector)
+        .with(collection_selector)
 
       expect(target.send(:find_elements, collection_selector, waiter, &block_childrens))
         .to eql([element_instance_1, element_instance_2])

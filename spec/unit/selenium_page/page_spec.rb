@@ -276,7 +276,7 @@ describe SeleniumPage::Page do
         expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
                                          .and_return(true)
         expect(subject).to receive(:find_elements).with(collection_selector)
-                                                 .and_return(element_instance_1)
+                                                  .and_return(element_instance_1)
 
         expect(subject.send(collection_name))
           .to eql(element_instance_1)
@@ -292,7 +292,7 @@ describe SeleniumPage::Page do
         expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
                                          .and_return(true)
         expect(subject).to receive(:find_elements).with(collection_selector, &block_childrens)
-                                                 .and_return(element_instance_1)
+                                                  .and_return(element_instance_1)
 
         expect(subject.send(collection_name))
           .to eql(element_instance_1)
@@ -331,7 +331,7 @@ describe SeleniumPage::Page do
       expect(SeleniumPage::Element).to receive(:new)
         .with(driver, element_base_element_1).and_return(element_instance_1)
       expect(element_instance_1).to receive(:add_childrens)
-                                    .with(element_selector, &block_childrens)
+        .with(element_selector, &block_childrens)
 
       expect(subject.send(:find_element, element_selector, waiter, &block_childrens))
         .to be(element_instance_1)
@@ -365,7 +365,7 @@ describe SeleniumPage::Page do
 
       expect(waiter).to receive(:until).and_call_original
       expect(driver).to receive(:find_elements).with(:css, collection_selector)
-                                              .and_return(collection_base_elements)
+                                               .and_return(collection_base_elements)
 
       expect(SeleniumPage::Element).to receive(:new)
         .with(driver, element_base_element_1).and_return(element_instance_1)
@@ -373,9 +373,9 @@ describe SeleniumPage::Page do
         .with(driver, element_base_element_2).and_return(element_instance_2)
 
       expect(element_instance_1).to receive(:add_childrens)
-                                    .with(collection_selector, &block_childrens)
+        .with(collection_selector, &block_childrens)
       expect(element_instance_2).to receive(:add_childrens)
-                                    .with(collection_selector, &block_childrens)
+        .with(collection_selector, &block_childrens)
 
       expect(subject.send(:find_elements, collection_selector, waiter, &block_childrens))
         .to eql([element_instance_1, element_instance_2])

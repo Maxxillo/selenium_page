@@ -18,7 +18,7 @@ module SeleniumPage
     def self.element(element_name, element_selector, &block)
       raise Errors::UnexpectedElementName unless element_name.is_a? Symbol
       raise Errors::UnexpectedElementSelector unless element_selector.is_a? String
-      raise Errors::AlreadyDefinedElementName.new(element_name) if instance_methods.include?(element_name)
+      raise Errors::AlreadyDefinedElementName, element_name if instance_methods.include?(element_name)
 
       define_method(element_name) do
         if block_given?
@@ -32,7 +32,7 @@ module SeleniumPage
     def self.elements(collection_name, collection_selector, &block)
       raise Errors::UnexpectedElementName unless collection_name.is_a? Symbol
       raise Errors::UnexpectedElementSelector unless collection_selector.is_a? String
-      raise Errors::AlreadyDefinedElementName.new(collection_name) if instance_methods.include?(collection_name)
+      raise Errors::AlreadyDefinedElementName, collection_name if instance_methods.include?(collection_name)
 
       define_method(collection_name) do
         if block_given?
@@ -78,9 +78,9 @@ module SeleniumPage
     end
 
     def find_elements(collection_selector,
-                     waiter = Selenium::WebDriver::Wait.new(
-                       timeout: SeleniumPage.wait_time
-                     ), &block)
+                      waiter = Selenium::WebDriver::Wait.new(
+                        timeout: SeleniumPage.wait_time
+                      ), &block)
       waiter.until do
         selenium_result = @driver.find_elements(:css, collection_selector)
         result = []
