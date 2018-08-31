@@ -44,6 +44,9 @@ describe 'nested elements' do
     expect(driver).to receive(:find_element)
       .with(:css, outer_name_selector + ' ' + inner_name_one_selector)
       .and_return(inner_name_one_selenium)
+    expect(inner_name_one_selenium).to receive(:is_a?)
+      .with(Selenium::WebDriver::Element)
+      .and_return true
 
     inner_name_one = outer_name.inner_name_one
 
@@ -55,6 +58,10 @@ describe 'nested elements' do
                   ' ' + inner_name_one_selector +
                   ' ' + inner_name_two_selector)
       .and_return(inner_name_two_selenium)
+    expect(inner_name_two_selenium).to receive(:is_a?)
+      .with(Selenium::WebDriver::Element)
+      .and_return true
+
 
     inner_name_two = inner_name_one.inner_name_two
 
@@ -66,6 +73,9 @@ describe 'nested elements' do
                   ' ' + inner_name_one_selector +
                   ' ' + inner_name_three_selector)
       .and_return(inner_name_three_selenium)
+    expect(inner_name_three_selenium).to receive(:is_a?)
+      .with(Selenium::WebDriver::Element)
+      .and_return true
 
     inner_name_three = inner_name_one.inner_name_three
 
