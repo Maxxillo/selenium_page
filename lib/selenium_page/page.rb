@@ -15,10 +15,15 @@ module SeleniumPage
       @url
     end
 
+    # rubocop:disable Metrics/MethodLength
     def self.element(element_name, element_selector, &block)
       raise Errors::UnexpectedElementName unless element_name.is_a? Symbol
-      raise Errors::UnexpectedElementSelector unless element_selector.is_a? String
-      raise Errors::AlreadyDefinedElementName, element_name if instance_methods.include?(element_name)
+      unless element_selector.is_a? String
+        raise Errors::UnexpectedElementSelector
+      end
+      if instance_methods.include?(element_name)
+        raise Errors::AlreadyDefinedElementName, element_name
+      end
 
       define_method(element_name) do
         if block_given?
@@ -31,8 +36,12 @@ module SeleniumPage
 
     def self.elements(collection_name, collection_selector, &block)
       raise Errors::UnexpectedElementName unless collection_name.is_a? Symbol
-      raise Errors::UnexpectedElementSelector unless collection_selector.is_a? String
-      raise Errors::AlreadyDefinedElementName, collection_name if instance_methods.include?(collection_name)
+      unless collection_selector.is_a? String
+        raise Errors::UnexpectedElementSelector
+      end
+      if instance_methods.include?(collection_name)
+        raise Errors::AlreadyDefinedElementName, collection_name
+      end
 
       define_method(collection_name) do
         if block_given?
@@ -42,6 +51,7 @@ module SeleniumPage
         end
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     def initialize(driver)
       raise Errors::WrongDriver unless driver.is_a? Selenium::WebDriver::Driver
@@ -77,6 +87,7 @@ module SeleniumPage
       end
     end
 
+    # rubocop:disable Metrics/MethodLength
     def find_elements(collection_selector,
                       waiter = Selenium::WebDriver::Wait.new(
                         timeout: SeleniumPage.wait_time
@@ -93,5 +104,6 @@ module SeleniumPage
         result
       end
     end
+    # rubocop:enable Metrics/MethodLength
   end
 end

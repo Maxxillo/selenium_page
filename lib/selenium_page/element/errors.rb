@@ -8,7 +8,8 @@ module SeleniumPage
       # WrongBaseElement
       class WrongBaseElement < StandardError
         def message
-          "Only 'Selenium::WebDriver::Element' are accepted as base_element parameter"
+          "Only 'Selenium::WebDriver::Element' are accepted " \
+          'as base_element parameter'
         end
       end
 

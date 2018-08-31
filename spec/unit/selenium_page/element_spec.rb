@@ -12,12 +12,18 @@ describe SeleniumPage::Element do
   end
 
   let(:element_selector) { '.element_selector' }
-  let(:element_base_element_1) { instance_double(Selenium::WebDriver::Element) }
-  let(:element_base_element_2) { instance_double(Selenium::WebDriver::Element) }
+  let(:element_base_element_1) do
+    instance_double(Selenium::WebDriver::Element)
+  end
+  let(:element_base_element_2) do
+    instance_double(Selenium::WebDriver::Element)
+  end
   let(:element_instance_1) { instance_double(SeleniumPage::Element) }
   let(:element_instance_2) { instance_double(SeleniumPage::Element) }
   let(:collection_selector) { '.collection_selector' }
-  let(:collection_base_elements) { [element_base_element_1, element_base_element_2] }
+  let(:collection_base_elements) do
+    [element_base_element_1, element_base_element_2]
+  end
   let(:waiter) { Selenium::WebDriver::Wait.new }
 
   subject { SeleniumPage::Element.new(driver, base_element) }
@@ -327,14 +333,15 @@ describe SeleniumPage::Element do
       target = subject
 
       expect(waiter).to receive(:until).and_call_original
-      expect(driver).to receive(:find_element).with(:css, element_selector)
-                                              .and_return(element_base_element_1)
+      expect(driver).to receive(:find_element)
+        .with(:css, element_selector).and_return(element_base_element_1)
       expect(SeleniumPage::Element).to receive(:new)
         .with(driver, element_base_element_1).and_return(element_instance_1)
       expect(element_instance_1).to receive(:add_childrens)
         .with(element_selector)
 
-      expect(target.send(:find_element, element_selector, waiter, &block_childrens))
+      expect(target.send(:find_element, element_selector,
+                         waiter, &block_childrens))
         .to be(element_instance_1)
     end
   end
@@ -372,8 +379,8 @@ describe SeleniumPage::Element do
       target = subject
 
       expect(waiter).to receive(:until).and_call_original
-      expect(driver).to receive(:find_elements).with(:css, collection_selector)
-                                               .and_return(collection_base_elements)
+      expect(driver).to receive(:find_elements)
+        .with(:css, collection_selector).and_return(collection_base_elements)
 
       expect(SeleniumPage::Element).to receive(:new)
         .with(driver, element_base_element_1).and_return(element_instance_1)
@@ -385,7 +392,8 @@ describe SeleniumPage::Element do
       expect(element_instance_2).to receive(:add_childrens)
         .with(collection_selector)
 
-      expect(target.send(:find_elements, collection_selector, waiter, &block_childrens))
+      expect(target.send(:find_elements, collection_selector,
+                         waiter, &block_childrens))
         .to eql([element_instance_1, element_instance_2])
     end
   end

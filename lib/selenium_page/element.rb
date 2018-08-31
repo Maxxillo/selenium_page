@@ -7,8 +7,11 @@ module SeleniumPage
 
     def initialize(driver, base_element)
       raise Errors::WrongDriver unless driver.is_a? Selenium::WebDriver::Driver
+      unless base_element.is_a? Selenium::WebDriver::Element
+        raise Errors::WrongBaseElement
+      end
+
       @driver = driver
-      raise Errors::WrongBaseElement unless base_element.is_a? Selenium::WebDriver::Element
       @base_element = base_element
     end
 
@@ -73,6 +76,7 @@ module SeleniumPage
       end
     end
 
+    # rubocop:disable Metrics/MethodLength
     def find_elements(collection_selector,
                       waiter = Selenium::WebDriver::Wait.new(
                         timeout: SeleniumPage.wait_time
@@ -89,5 +93,6 @@ module SeleniumPage
         result
       end
     end
+    # rubocop:enable Metrics/MethodLength
   end
 end
