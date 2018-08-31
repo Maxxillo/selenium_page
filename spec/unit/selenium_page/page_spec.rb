@@ -8,7 +8,8 @@ describe SeleniumPage::Page do
   let(:element_selector) { '#element_id' }
   let(:element_base_element_1) { instance_double(Selenium::WebDriver::Element) }
   let(:element_base_element_2) { instance_double(Selenium::WebDriver::Element) }
-  let(:element_instance) { instance_double(SeleniumPage::Element) }
+  let(:element_instance_1) { instance_double(SeleniumPage::Element) }
+  let(:element_instance_2) { instance_double(SeleniumPage::Element) }
   let(:collection_name) { :list_result }
   let(:collection_selector) { 'a.collection_class' }
   let(:collection_base_elements) { [element_base_element_1, element_base_element_2] }
@@ -239,10 +240,10 @@ describe SeleniumPage::Page do
         expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
                                          .and_return(true)
         expect(subject).to receive(:find_element).with(element_selector)
-                                                 .and_return(element_instance)
+                                                 .and_return(element_instance_1)
 
         expect(subject.send(element_name))
-          .to eql(element_instance)
+          .to eql(element_instance_1)
       end
     end
 
@@ -255,10 +256,10 @@ describe SeleniumPage::Page do
         expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
                                          .and_return(true)
         expect(subject).to receive(:find_element).with(element_selector, &block_childrens)
-                                                 .and_return(element_instance)
+                                                 .and_return(element_instance_1)
 
         expect(subject.send(element_name))
-          .to eql(element_instance)
+          .to eql(element_instance_1)
       end
     end
   end
@@ -275,10 +276,10 @@ describe SeleniumPage::Page do
         expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
                                          .and_return(true)
         expect(subject).to receive(:find_elements).with(collection_selector)
-                                                 .and_return(element_instance)
+                                                 .and_return(element_instance_1)
 
         expect(subject.send(collection_name))
-          .to eql(element_instance)
+          .to eql(element_instance_1)
       end
     end
 
@@ -291,10 +292,10 @@ describe SeleniumPage::Page do
         expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
                                          .and_return(true)
         expect(subject).to receive(:find_elements).with(collection_selector, &block_childrens)
-                                                 .and_return(element_instance)
+                                                 .and_return(element_instance_1)
 
         expect(subject.send(collection_name))
-          .to eql(element_instance)
+          .to eql(element_instance_1)
       end
     end
   end
@@ -328,12 +329,56 @@ describe SeleniumPage::Page do
       expect(driver).to receive(:find_element).with(:css, element_selector)
                                               .and_return(element_base_element_1)
       expect(SeleniumPage::Element).to receive(:new)
-        .with(driver, element_base_element_1).and_return(element_instance)
-      expect(element_instance).to receive(:add_childrens)
+        .with(driver, element_base_element_1).and_return(element_instance_1)
+      expect(element_instance_1).to receive(:add_childrens)
                                     .with(element_selector, &block_childrens)
 
       expect(subject.send(:find_element, element_selector, waiter, &block_childrens))
-        .to be(element_instance)
+        .to be(element_instance_1)
+    end
+  end
+
+  describe '#find_elements' do
+    subject do
+      described_class.new(driver)
+    end
+
+    context 'when the timeout expires' do
+      it 'raise the original timeout error' do
+        expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
+                                         .and_return(true)
+
+        expect(waiter).to receive(:until).and_call_original
+        expect(driver).to receive(:find_elements)
+          .with(:css, collection_selector)
+          .and_raise(Selenium::WebDriver::Error::TimeOutError)
+        allow(Time).to receive(:now).and_return(0)
+
+        expect { subject.send(:find_elements, collection_selector, waiter) }
+          .to raise_error(Selenium::WebDriver::Error::TimeOutError)
+      end
+    end
+
+    it 'calls the Selenium::WebDriver::Driver wrapped in a wait' do
+      expect(driver).to receive(:is_a?).with(Selenium::WebDriver::Driver)
+                                       .and_return(true)
+
+      expect(waiter).to receive(:until).and_call_original
+      expect(driver).to receive(:find_elements).with(:css, collection_selector)
+                                              .and_return(collection_base_elements)
+
+      expect(SeleniumPage::Element).to receive(:new)
+        .with(driver, element_base_element_1).and_return(element_instance_1)
+      expect(SeleniumPage::Element).to receive(:new)
+        .with(driver, element_base_element_2).and_return(element_instance_2)
+
+      expect(element_instance_1).to receive(:add_childrens)
+                                    .with(collection_selector, &block_childrens)
+      expect(element_instance_2).to receive(:add_childrens)
+                                    .with(collection_selector, &block_childrens)
+
+      expect(subject.send(:find_elements, collection_selector, waiter, &block_childrens))
+        .to eql([element_instance_1, element_instance_2])
     end
   end
 end
