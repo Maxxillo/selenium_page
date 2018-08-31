@@ -6,6 +6,7 @@ describe SeleniumPage::Element do
 
   let(:parent_selector) { '.parent_selector' }
   let(:children_name) { :children_name }
+  let(:children_selector) { 'children_selector' }
   let(:block_childrens) do
     Proc.new { element :children_name, 'children_selector' }
   end
@@ -178,9 +179,109 @@ describe SeleniumPage::Element do
         .with(Selenium::WebDriver::Element)
         .and_return(true)
 
-      subject.add_childrens(parent_selector, &block_childrens)
+      expect(subject).to receive(:element)
 
-      expect(subject.respond_to?(children_name)).to be true
+      subject.add_childrens(parent_selector, &block_childrens)
+    end
+  end
+
+  describe '.element' do
+    context 'when block is given' do
+      it 'create singleton method' do
+        expect(driver).to receive(:is_a?)
+          .with(Selenium::WebDriver::Driver)
+          .and_return(true)
+        expect(base_element).to receive(:is_a?)
+          .with(Selenium::WebDriver::Element)
+          .and_return(true)
+
+        subject.instance_variable_set(:@parent_selector, parent_selector)
+
+        subject.element(children_name, children_selector, &block_childrens)
+
+        expect(subject.respond_to?(children_name)).to be true
+
+        # FIXME: there is something strange here ...
+        # passing of block needs to be improved
+        expect(subject).to receive(:find_element)
+          .with(parent_selector + ' ' + children_selector)
+          .and_return(true)
+
+        subject.send(children_name)
+      end
+    end
+
+    context 'when block is not given' do
+      it 'create singleton method' do
+        expect(driver).to receive(:is_a?)
+          .with(Selenium::WebDriver::Driver)
+          .and_return(true)
+        expect(base_element).to receive(:is_a?)
+          .with(Selenium::WebDriver::Element)
+          .and_return(true)
+
+        subject.instance_variable_set(:@parent_selector, parent_selector)
+
+        subject.element(children_name, children_selector)
+
+        expect(subject.respond_to?(children_name)).to be true
+
+        expect(subject).to receive(:find_element)
+          .with(parent_selector + ' ' + children_selector)
+          .and_return(true)
+
+        subject.send(children_name)
+      end
+    end
+  end
+
+  describe '.elements' do
+    context 'when block is given' do
+      it 'create singleton method' do
+        expect(driver).to receive(:is_a?)
+          .with(Selenium::WebDriver::Driver)
+          .and_return(true)
+        expect(base_element).to receive(:is_a?)
+          .with(Selenium::WebDriver::Element)
+          .and_return(true)
+
+        subject.instance_variable_set(:@parent_selector, parent_selector)
+
+        subject.elements(children_name, children_selector, &block_childrens)
+
+        expect(subject.respond_to?(children_name)).to be true
+
+        # FIXME: there is something strange here ...
+        # passing of block needs to be improved
+        expect(subject).to receive(:find_elements)
+          .with(parent_selector + ' ' + children_selector)
+          .and_return(true)
+
+        subject.send(children_name)
+      end
+    end
+
+    context 'when block is not given' do
+      it 'create singleton method' do
+        expect(driver).to receive(:is_a?)
+          .with(Selenium::WebDriver::Driver)
+          .and_return(true)
+        expect(base_element).to receive(:is_a?)
+          .with(Selenium::WebDriver::Element)
+          .and_return(true)
+
+        subject.instance_variable_set(:@parent_selector, parent_selector)
+
+        subject.elements(children_name, children_selector)
+
+        expect(subject.respond_to?(children_name)).to be true
+
+        expect(subject).to receive(:find_elements)
+          .with(parent_selector + ' ' + children_selector)
+          .and_return(true)
+
+        subject.send(children_name)
+      end
     end
   end
 end
