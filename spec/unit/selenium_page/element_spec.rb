@@ -6,10 +6,19 @@ describe SeleniumPage::Element do
 
   let(:parent_selector) { '.parent_selector' }
   let(:children_name) { :children_name }
-  let(:children_selector) { 'children_selector' }
+  let(:children_selector) { '.children_selector' }
   let(:block_childrens) do
-    Proc.new { element :children_name, 'children_selector' }
+    Proc.new { element :children_name, '.children_selector' }
   end
+
+  let(:element_selector) { '.element_selector' }
+  let(:element_base_element_1) { instance_double(Selenium::WebDriver::Element) }
+  let(:element_base_element_2) { instance_double(Selenium::WebDriver::Element) }
+  let(:element_instance_1) { instance_double(SeleniumPage::Element) }
+  let(:element_instance_2) { instance_double(SeleniumPage::Element) }
+  let(:collection_selector) { '.collection_selector' }
+  let(:collection_base_elements) { [element_base_element_1, element_base_element_2] }
+  let(:waiter) { Selenium::WebDriver::Wait.new }
 
   subject { SeleniumPage::Element.new(driver, base_element) }
 
@@ -282,6 +291,102 @@ describe SeleniumPage::Element do
 
         subject.send(children_name)
       end
+    end
+  end
+
+  describe '#find_element' do
+    context 'when the timeout expires' do
+      it 'raise the original timeout error' do
+        expect(driver).to receive(:is_a?)
+          .with(Selenium::WebDriver::Driver)
+          .and_return(true)
+        expect(base_element).to receive(:is_a?)
+          .with(Selenium::WebDriver::Element)
+          .and_return(true)
+
+        expect(waiter).to receive(:until).and_call_original
+        expect(driver).to receive(:find_element)
+          .with(:css, element_selector)
+          .and_raise(Selenium::WebDriver::Error::TimeOutError)
+        allow(Time).to receive(:now).and_return(0)
+
+        expect { subject.send(:find_element, element_selector, waiter) }
+          .to raise_error(Selenium::WebDriver::Error::TimeOutError)
+      end
+    end
+
+    it 'calls the Selenium::WebDriver::Driver wrapped in a wait' do
+      expect(driver).to receive(:is_a?)
+        .with(Selenium::WebDriver::Driver)
+        .and_return(true)
+      expect(base_element).to receive(:is_a?)
+        .with(Selenium::WebDriver::Element)
+        .and_return(true)
+
+      # FIXME: needed because new is mocked below (need better solution)
+      target = subject
+
+      expect(waiter).to receive(:until).and_call_original
+      expect(driver).to receive(:find_element).with(:css, element_selector)
+                                              .and_return(element_base_element_1)
+      expect(SeleniumPage::Element).to receive(:new)
+        .with(driver, element_base_element_1).and_return(element_instance_1)
+      expect(element_instance_1).to receive(:add_childrens)
+                                    .with(element_selector)
+
+      expect(target.send(:find_element, element_selector, waiter, &block_childrens))
+        .to be(element_instance_1)
+    end
+  end
+
+  describe '#find_elements' do
+    context 'when the timeout expires' do
+      it 'raise the original timeout error' do
+        expect(driver).to receive(:is_a?)
+          .with(Selenium::WebDriver::Driver)
+          .and_return(true)
+        expect(base_element).to receive(:is_a?)
+          .with(Selenium::WebDriver::Element)
+          .and_return(true)
+
+        expect(waiter).to receive(:until).and_call_original
+        expect(driver).to receive(:find_elements)
+          .with(:css, collection_selector)
+          .and_raise(Selenium::WebDriver::Error::TimeOutError)
+        allow(Time).to receive(:now).and_return(0)
+
+        expect { subject.send(:find_elements, collection_selector, waiter) }
+          .to raise_error(Selenium::WebDriver::Error::TimeOutError)
+      end
+    end
+
+    it 'calls the Selenium::WebDriver::Driver wrapped in a wait' do
+      expect(driver).to receive(:is_a?)
+        .with(Selenium::WebDriver::Driver)
+        .and_return(true)
+      expect(base_element).to receive(:is_a?)
+        .with(Selenium::WebDriver::Element)
+        .and_return(true)
+
+      # FIXME: needed because new is mocked below (need better solution)
+      target = subject
+
+      expect(waiter).to receive(:until).and_call_original
+      expect(driver).to receive(:find_elements).with(:css, collection_selector)
+                                              .and_return(collection_base_elements)
+
+      expect(SeleniumPage::Element).to receive(:new)
+        .with(driver, element_base_element_1).and_return(element_instance_1)
+      expect(SeleniumPage::Element).to receive(:new)
+        .with(driver, element_base_element_2).and_return(element_instance_2)
+
+      expect(element_instance_1).to receive(:add_childrens)
+                                    .with(collection_selector)
+      expect(element_instance_2).to receive(:add_childrens)
+                                    .with(collection_selector)
+
+      expect(target.send(:find_elements, collection_selector, waiter, &block_childrens))
+        .to eql([element_instance_1, element_instance_2])
     end
   end
 end
