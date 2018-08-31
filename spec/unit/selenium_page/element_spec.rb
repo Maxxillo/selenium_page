@@ -4,6 +4,12 @@ describe SeleniumPage::Element do
   let(:driver) { instance_double(Selenium::WebDriver::Driver) }
   let(:base_element) { instance_double(Selenium::WebDriver::Element) }
 
+  let(:parent_selector) { '.parent_selector' }
+  let(:children_name) { :children_name }
+  let(:block_childrens) do
+    Proc.new { element :children_name, 'children_selector' }
+  end
+
   subject { SeleniumPage::Element.new(driver, base_element) }
 
   describe '.initialize' do
@@ -150,6 +156,31 @@ describe SeleniumPage::Element do
   end
 
   describe '#add_childrens' do
-    
+    it 'assigns parent_selector' do
+      expect(driver).to receive(:is_a?)
+        .with(Selenium::WebDriver::Driver)
+        .and_return(true)
+      expect(base_element).to receive(:is_a?)
+        .with(Selenium::WebDriver::Element)
+        .and_return(true)
+
+      subject.add_childrens(parent_selector)
+
+      expect(subject.instance_variable_get(:@parent_selector))
+        .to be(parent_selector)
+    end
+
+    it 'evaluate the given block' do
+      expect(driver).to receive(:is_a?)
+        .with(Selenium::WebDriver::Driver)
+        .and_return(true)
+      expect(base_element).to receive(:is_a?)
+        .with(Selenium::WebDriver::Element)
+        .and_return(true)
+
+      subject.add_childrens(parent_selector, &block_childrens)
+
+      expect(subject.respond_to?(children_name)).to be true
+    end
   end
 end
