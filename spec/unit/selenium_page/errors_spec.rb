@@ -14,3 +14,18 @@ describe SeleniumPage::Errors::UnexpectedSchemeAndAuthority do
     end
   end
 end
+
+describe SeleniumPage::Errors::UnexpectedWaitTime do
+  it 'inherits from StandardError' do
+    expect(described_class.superclass).to be StandardError
+  end
+
+  describe '#message' do
+    subject { described_class.new }
+
+    it 'returns error message' do
+      expect(subject.message)
+        .to eql("Only 'Numeric' are accepted")
+    end
+  end
+end
